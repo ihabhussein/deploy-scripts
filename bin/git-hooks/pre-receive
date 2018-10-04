@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "GIT__USER => $GIT__USER"
+
+exit 0

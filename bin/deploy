@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+if [ "$(GIT_DIR=$1 git config --get core.bare)" = "true" ]; then
+    GIT_DIR="$1"; export GIT_DIR
+    target=$(git config --get deploy.target)
+    [ -d "$target" ] || exit
+
+    ref=$(git config --get deploy.ref)
+    GIT_WORK_TREE="$target" git checkout -f ${ref:-master}
+elif [ -d "$1/.git" ]; then
+    GIT_DIR="$1/.git"; export GIT_DIR
+    target=$1
+
+    remote=$(git remote | head -1)
+    ref=$(git config --get deploy.ref)
+    GIT_WORK_TREE="$target" git pull $remote ${ref:-master}
+else
+    exit 1
+fi
+
+post-deploy $target $(git config --get deploy.service)

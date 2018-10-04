@@ -1,0 +1,26 @@
+#!/bin/sh
+
+: ${flag_dir=/tmp/restart-services}
+
+set -e
+
+if [ $# -lt 1 -o $# -gt 2 ]; then
+    echo "Usage: $0 target [service]"
+    exit 1
+fi
+
+if [ -f "$1/requirements.txt" -a -x "$1/manage.py" ]; then
+    # Django
+    [ -f "$1/env.sh" ] && . $1/env.sh
+    pip install ${PYTHONUSERBASE+--user} -q -r $1/requirements.txt
+    $1/manage.py migrate
+    $1/manage.py collectstatic --no-input
+
+else
+    echo "post-deploy: Can't determine project type!"
+fi
+
+if [ -n "$2" ]; then
+    mkdir -p "$flag_dir"
+    touch $flag_dir/$2
+fi

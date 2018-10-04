@@ -1,0 +1,57 @@
+##############################################################################
+# Monit control file
+##############################################################################
+
+set daemon 30 with start delay 240
+set log syslog
+set pidfile /var/run/monit.pid
+set idfile /var/.monit.id
+set statefile /var/.monit.state
+set mailserver localhost
+set eventqueue basedir /var/monit slots 100  # optionally limit the queue size
+set alert root
+set httpd port 2812 address localhost allow localhost allow admin:monit
+set limits {
+    programOutput:     512 B,      # check program's output truncate limit
+    sendExpectBuffer:  256 B,      # limit for send/expect protocol test
+    fileContentBuffer: 512 B,      # limit for file content test
+    httpContentBuffer: 1 MB,       # limit for HTTP content test
+    networkTimeout:    5 seconds   # timeout for network I/O
+    programTimeout:    300 seconds # timeout for check program
+    stopTimeout:       30 seconds  # timeout for service stop
+    startTimeout:      30 seconds  # timeout for service start
+    restartTimeout:    30 seconds  # timeout for service restart
+}
+
+
+##############################################################################
+# Services
+##############################################################################
+
+check system $HOST
+    if loadavg (1min) > 4 then alert
+    if loadavg (5min) > 2 then alert
+    if cpu usage > 95% for 10 cycles then alert
+    if memory usage > 75% then alert
+    if swap usage > 25% then alert
+
+
+check process nginx with pidfile /var/run/nginx.pid
+    start program = "/usr/local/etc/rc.d/nginx start"
+    stop program  = "/usr/local/etc/rc.d/nginx stop"
+    if failed port 80 then restart
+    if failed port 433 then restart
+
+
+check process postgres with pidfile /var/db/postgres/data10/postmaster.pid
+    start program = "/usr/local/etc/rc.d/postgresql start"
+    stop program  = "/usr/local/etc/rc.d/postgresql stop"
+    if failed unixsocket /tmp/.s.PGSQL.5432 then restart
+    if failed port 5432 then restart
+
+
+##############################################################################
+# Includes
+##############################################################################
+
+  include /usr/local/etc/monit.d/*

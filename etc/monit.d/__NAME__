@@ -1,0 +1,4 @@
+check process __NAME__ with pidfile __SOCKET__.pid
+    start program = "/usr/local/etc/rc.d/__NAME__ start"
+    stop program  = "/usr/local/etc/rc.d/__NAME__ stop"
+    if failed unixsocket __SOCKET__ then restart

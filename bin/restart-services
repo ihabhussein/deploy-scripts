@@ -1,0 +1,16 @@
+#!/bin/sh
+
+: ${flag_dir=/tmp/restart-services}
+
+set -e
+
+output=$(mktemp)
+for f in $flag_dir/*; do
+    [ -f "$f" ] || continue
+    ls -l "$f" >> $output
+    name=$(basename -- "$f")
+    service $name restart 2>&1 >> $output
+    rm "$f"
+done
+[ -s "$output" ] && mail -s 'Restarting services' root < $output
+rm "$output"

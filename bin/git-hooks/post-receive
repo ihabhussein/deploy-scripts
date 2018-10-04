@@ -1,0 +1,18 @@
+#!/bin/sh
+
+: ${flag_dir=/tmp/restart-services}
+
+set -e
+
+target=$(git config --get deploy.target)
+service=$(git config --get deploy.service)
+ref=$(git config --get deploy.ref)
+
+[ -n "$target" ] || exit
+
+while read sha1_old sha1_new refname; do
+    [ ${refname##*/} = ${ref:-master} ] || continue
+
+    GIT_WORK_TREE="$target" git checkout -f ${ref:-master}
+    post-deploy $target $service
+done
