@@ -99,4 +99,10 @@ init() {
     chown -R $user:$group $home/$1
 }
 
-"$@"
+
+if [ $(id -u) -eq 0 ]; then
+    "$@"
+else
+    echo "This script must run as root"
+    exit 1
+fi
