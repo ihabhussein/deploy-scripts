@@ -1,7 +1,5 @@
 #!/bin/sh
 
-: ${flag_dir=/tmp/restart-services}
-
 set -e
 
 if [ $# -lt 1 -o $# -gt 2 ]; then
@@ -20,7 +18,4 @@ else
     echo "post-deploy: Can't determine project type!"
 fi
 
-if [ -n "$2" ]; then
-    mkdir -p "$flag_dir"
-    touch $flag_dir/$2
-fi
+[ -n "$2" ] && restart-service $2

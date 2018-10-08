@@ -1,7 +1,5 @@
 #!/bin/sh
 
-: ${flag_dir=/tmp/restart-services}
-
 set -e
 
 target=$(git config --get deploy.target)

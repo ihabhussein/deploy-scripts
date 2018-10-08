@@ -1,9 +1,24 @@
 #!/bin/sh
 
 : ${flag_dir=/tmp/restart-services}
+mkdir -p "$flag_dir"
 
 set -e
 
+#
+# Planting the flag
+#
+while [ $# -gt 0 ]; do
+    name=${1//[^a-z_]/}
+    service $name status && touch $flag_dir/$name
+    shift
+done
+
+[ $(id -u) -eq 0 ] || exit
+
+#
+# Restarting
+#
 output=$(mktemp)
 for f in $flag_dir/*; do
     [ -f "$f" ] || continue
