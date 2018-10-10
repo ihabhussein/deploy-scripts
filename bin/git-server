@@ -64,9 +64,9 @@ remove_key() {
 }
 
 _create_database() {
-    local username=$(openssl rand -base64 64 | tr -cd 'a-z'       | head -c 12)
-    local password=$(openssl rand -base64 64 | tr -cd '0-9A-Za-z' | head -c 12)
-    local database=$(openssl rand -base64 64 | tr -cd 'a-z'       | head -c 12)
+    local username=$(openssl rand -base64 64 | tr -cd '[[:lower:]]' | head -c 12)
+    local password=$(openssl rand -base64 64 | tr -cd '[[:alnum:]]' | head -c 12)
+    local database=$(openssl rand -base64 64 | tr -cd '[[:lower:]]' | head -c 12)
 
     $psql -c "CREATE USER $username WITH PASSWORD '$password';" 2>&1 >/dev/null
     $psql -c "CREATE DATABASE $database WITH OWNER $username;"  2>&1 >/dev/null
