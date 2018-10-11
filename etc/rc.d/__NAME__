@@ -10,12 +10,13 @@
 name=__NAME__
 rcvar=__NAME___enable
 pidfile=__SOCKET__.pid
-command=/usr/local/bin/python3.6
-command_args="/usr/local/bin/gunicorn-3.6 -b unix:__SOCKET__ -w 4 -p $pidfile -D website.wsgi"
+command=/usr/local/bin/gunicorn-3.6
+command_args="-b unix:__SOCKET__ -w 4 -p $pidfile -D website.wsgi"
 
 load_rc_config $name
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}
+: ${__NAME___group:=www}
 
 [ -f "__PDIR__/env.sh" ] && . __PDIR__/env.sh
 run_rc_command $1
