@@ -1,5 +1,3 @@
 #!/bin/sh
 
-echo "GIT__USER => $GIT__USER"
-
-exit 0
+printf 'GIT__USER => %s\n' "$GIT__USER"
