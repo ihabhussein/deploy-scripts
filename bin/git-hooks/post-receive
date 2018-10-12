@@ -5,6 +5,7 @@ set -e
 target=$(git config --get deploy.target)
 service=$(git config --get deploy.service)
 ref=$(git config --get deploy.ref)
+shallow=$(git config --get --bool deploy.shallow)
 
 [ -n "$target" ] || exit
 : ${ref:=master}
@@ -15,3 +16,11 @@ while read sha1_old sha1_new refname; do
     GIT_WORK_TREE="$target" git checkout -f $ref
     post-deploy $target $service
 done
+
+if [ "$shallow" = "true" ]; then
+    git show-ref -s $ref > ${GIT_DIR}/shallow
+    git reflog expire --expire=0 --all
+    git prune
+    git prune-packed
+    git gc --prune=all
+fi
