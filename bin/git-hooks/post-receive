@@ -7,10 +7,11 @@ service=$(git config --get deploy.service)
 ref=$(git config --get deploy.ref)
 
 [ -n "$target" ] || exit
+: ${ref:=master}
 
 while read sha1_old sha1_new refname; do
-    [ ${refname##*/} = ${ref:-master} ] || continue
+    [ ${refname##*/} = $ref ] || continue
 
-    GIT_WORK_TREE="$target" git checkout -f ${ref:-master}
+    GIT_WORK_TREE="$target" git checkout -f $ref
     post-deploy $target $service
 done
