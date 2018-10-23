@@ -1,3 +1,11 @@
 #!/bin/sh
 
-printf 'GIT__USER => %s\n' "$GIT__USER"
+set -e
+
+printf '[PRE-RECEIVE] USER=%s;\n' "$GIT__USER"
+while read sha1_old sha1_new refname; do
+    printf '[PRE-RECEIVE] REFNAME=%s;\n' "$refname"
+    printf '[PRE-RECEIVE]     %s => %s\n' "${sha1_old:0:10}" "${sha1_new:0:10}"
+done
+
+exit 0

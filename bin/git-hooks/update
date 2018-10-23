@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e
+
+[ -z "$1" -o -z "$2" -o -z "$3" ] && exit 1
+refname=$1
+sha1_old=$2
+sha1_new=$3
+
+if [ "${sha1_new//0/}" = '' ]; then
+    sha1_new_type=delete
+else
+    sha1_new_type=$(git cat-file -t $sha1_new)
+fi
+case "$refname,sha1_new_type" in
+refs/tags/*,commit)     action='Un-annotated tag' ;;
+refs/tags/*,tag)        action='Annotated tag' ;;
+refs/tags/*,delete)     action='Delete tag' ;;
+refs/heads/*,commit)    action='Branch' ;;
+refs/heads/*,delete)    action='Delete branch' ;;
+refs/remotes/*,commit)  action='Tracking branch' ;;
+refs/remotes/*,delete)  action='Delete tracking branch' ;;
+*)                      action='Unknown' ;;
+esac
+
+printf '[UPDATE] USER=%s;REFNAME=%s;ACTION=%s;\n' "$GIT__USER" $refname $action
+
+for r in $(git rev-list $sha1_old..$sha1_new); do
+    git log -1 --name-only --pretty='' $r | while read f; do
+        printf '[UPDATE]     %s\n' "$f"
+    done
+done | sort -u
+
+exit 0
