@@ -1,6 +1,4 @@
-##############################################################################
 # Monit control file
-##############################################################################
 
 set daemon 30 with start delay 240
 set log syslog
@@ -23,11 +21,6 @@ set limits {
     restartTimeout:    30 seconds  # timeout for service restart
 }
 
-
-##############################################################################
-# Services
-##############################################################################
-
 check system $HOST
     if loadavg (1min) > 4 then alert
     if loadavg (5min) > 2 then alert
@@ -35,23 +28,4 @@ check system $HOST
     if memory usage > 75% then alert
     if swap usage > 25% then alert
 
-
-check process nginx with pidfile /var/run/nginx.pid
-    start program = "/usr/local/etc/rc.d/nginx start"
-    stop program  = "/usr/local/etc/rc.d/nginx stop"
-    if failed port 80 then restart
-    if failed port 433 then restart
-
-
-check process postgres with pidfile /var/db/postgres/data10/postmaster.pid
-    start program = "/usr/local/etc/rc.d/postgresql start"
-    stop program  = "/usr/local/etc/rc.d/postgresql stop"
-    if failed unixsocket /tmp/.s.PGSQL.5432 then restart
-    if failed port 5432 then restart
-
-
-##############################################################################
-# Includes
-##############################################################################
-
-  include /usr/local/etc/monit.d/*
+include /usr/local/etc/monit.d/*

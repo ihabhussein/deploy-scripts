@@ -1,0 +1,5 @@
+check process postgres with pidfile /var/db/postgres/data10/postmaster.pid
+    start program = "/usr/local/etc/rc.d/postgresql start"
+    stop program  = "/usr/local/etc/rc.d/postgresql stop"
+    if failed unixsocket /tmp/.s.PGSQL.5432 then restart
+    if failed port 5432 then restart
