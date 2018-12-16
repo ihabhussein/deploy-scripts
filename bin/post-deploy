@@ -25,6 +25,11 @@ if [ -f "$1/cpanfile" ]; then
     cpanm ${PERL_LOCAL_LIB_ROOT+-L $PERL_LOCAL_LIB_ROOT} --installdeps $1
 fi
 
+if [ -f "$1/Gemfile.lock" ]; then
+    # Ruby
+    (cd "$1" && bundle install)
+fi
+
 if [ -f "$1/package.json" ]; then
     # Node
     (cd "$1" && npm install)
