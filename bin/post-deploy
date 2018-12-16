@@ -7,15 +7,27 @@ if [ $# -lt 1 -o $# -gt 2 ]; then
     exit 1
 fi
 
+# Local environment file
+[ -f "$1/env.sh" ] && . $1/env.sh
+
+# BSD rc.d configuration file
+[ -f "/usr/local/etc/rc.conf.d/$2" ] && . "/usr/local/etc/rc.conf.d/$2"
+
 if [ -f "$1/requirements.txt" -a -x "$1/manage.py" ]; then
     # Django
-    [ -f "$1/env.sh" ] && . $1/env.sh
     pip install ${PYTHONUSERBASE+--user} -q -r $1/requirements.txt
     $1/manage.py migrate
     $1/manage.py collectstatic --no-input
+fi
 
-else
-    echo "post-deploy: Can't determine project type!"
+if [ -f "$1/cpanfile" ]; then
+    # Perl
+    cpanm ${PERL_LOCAL_LIB_ROOT+-L $PERL_LOCAL_LIB_ROOT} --installdeps $1
+fi
+
+if [ -f "$1/package.json" ]; then
+    # Node
+    (cd "$1" && npm install)
 fi
 
 [ -n "$2" ] && restart-service $2
