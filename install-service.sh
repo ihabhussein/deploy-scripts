@@ -11,7 +11,6 @@ cd "$(cd $(dirname -- $0); pwd)"
 
 for f in \
     etc/rc.d/__NAME__ \
-    etc/monit.d/__NAME__ \
     etc/nginx/conf.d/__NAME__.conf \
 ; do
     g=$(echo "$dest/$f" | sed -E "s/__NAME__/$name/g")
