@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# PROVIDE: __NAME__
+# REQUIRE: LOGIN postgresql nginx
+# KEYWORD:
+
+. /etc/rc.subr
+name=__NAME__
+rcvar=${name}_enable
+load_rc_config $name
+
+command=/usr/local/bin/python3.6
+command_args="/usr/local/bin/gunicorn-3.6 -b unix:/tmp/gunicorn.__NAME__ -w 4 -p /tmp/__NAME__.pid -D website.wsgi"
+pidfile=/tmp/__NAME__.pid
+: ${__NAME___enable:=no}
+: ${__NAME___user:=www}
+: ${__NAME___chdir:=__PDIR__}
+: ${__NAME___env:=PYTHONUSERBASE=__PDIR__/.local}
+
+run_rc_command $1

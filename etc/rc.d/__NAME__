@@ -1,12 +1,10 @@
 #!/bin/sh
 
 # PROVIDE: __NAME__
-# REQUIRE: DAEMON postgresql nginx
-# BEFORE:  LOGIN
+# REQUIRE: LOGIN postgresql nginx
 # KEYWORD:
 
 . /etc/rc.subr
-
 name=__NAME__
 rcvar=__NAME___enable
 pidfile=__SOCKET__.pid
@@ -17,6 +15,7 @@ load_rc_config $name
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}
 : ${__NAME___group:=www}
+: ${__NAME___chdir:=__PDIR__}
+: ${__NAME___env:=}
 
-[ -f "__PDIR__/env.sh" ] && . __PDIR__/env.sh
 run_rc_command $1
