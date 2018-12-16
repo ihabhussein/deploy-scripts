@@ -1,7 +1,7 @@
 #!/bin/sh
 
-name=$(printf '%s' "$1" | tr -dc '[[:alnum:].]' | tr '[[:upper:]]' '[[:lower:]]')
-dest=/usr/local/
+name=$(printf '%s' "$1" | tr -dc '[[:alnum:]_]' | tr '[[:upper:]]' '[[:lower:]]')
+dest=/usr/local
 root=$dest/www
 
 [ -n "$name" ] || exit 1
@@ -14,7 +14,7 @@ for f in \
     etc/monit.d/__NAME__ \
     etc/nginx/conf.d/__NAME__.conf \
 ; do
-    g="$dest/${f/__NAME__/$name}"
+    g=$(echo "$dest/$f" | sed -E "s/__NAME__/$name/g")
     /usr/bin/sed \
         -e "s|__NAME__|$name|g;" \
         -e "s|__PDIR__|$root/$name|g;" \

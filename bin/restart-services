@@ -9,7 +9,7 @@ set -e
 # Planting the flag
 #
 while [ $# -gt 0 ]; do
-    name=${1//[^a-z_]/}
+    name=$(echo $1 | tr -cd '[[:alpha:]_]')
     service $name status && touch $flag_dir/$name
     shift
 done

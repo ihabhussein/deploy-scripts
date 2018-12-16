@@ -7,7 +7,7 @@ refname=$1
 sha1_old=$2
 sha1_new=$3
 
-if [ "${sha1_new//0/}" = '' ]; then
+if echo "$sha1_new" | grep -E '^0+$' 2>&1 >/dev/null; then
     sha1_new_type=delete
 else
     sha1_new_type=$(git cat-file -t $sha1_new)
