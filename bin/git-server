@@ -6,7 +6,6 @@
 
 : ${git=/usr/local/bin/git}
 : ${git_shell=/usr/local/bin/git-shell}
-: ${psql=/usr/local/bin/psql -U postgres}
 : ${git_hooks=/usr/local/bin/git-hooks}
 
 set -e
@@ -63,18 +62,6 @@ remove_key() {
     _update_authorized_keys
 }
 
-_create_database() {
-    local username=$(openssl rand -base64 64 | tr -cd '[[:lower:]]' | head -c 12)
-    local password=$(openssl rand -base64 64 | tr -cd '[[:alnum:]]' | head -c 12)
-    local database=$(openssl rand -base64 64 | tr -cd '[[:lower:]]' | head -c 12)
-
-    $psql -c "CREATE USER $username WITH PASSWORD '$password';" 2>&1 >/dev/null
-    $psql -c "CREATE DATABASE $database WITH OWNER $username;"  2>&1 >/dev/null
-
-    printf "export DATABASE_URL=postgresql://%s:%s@%s:%s/%s" \
-        $username $password ${PGHOST-localhost} ${PGPORT-5432} $database
-}
-
 init() {
     if [ $# -lt 1 -o $# -gt 4 ]; then
         echo "Usage: init repo [target [service [ref]]]" >&2
@@ -86,14 +73,10 @@ init() {
     $git config core.hooksPath $git_hooks
 
     if [ -n "$2" ]; then
+        mkdir -p "$2"
         $git config deploy.target  $2
         $git config deploy.service ${3-$(basename -- $2)}
         $git config deploy.ref     ${4-master}
-
-        mkdir -p "$2"
-        echo "export PYTHONUSERBASE=$2/.local" >> "$2/env.sh"
-        echo "export PYTHONPATH=$2/src"        >> "$2/env.sh"
-        _create_database                       >> "$2/env.sh"
     fi
 
     chown -R $user:$group $home/$1
