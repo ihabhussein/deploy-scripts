@@ -1,0 +1,114 @@
+#!/bin/sh
+
+################################################################################
+
+_init_node() {
+    type=node
+    npm install
+}
+
+################################################################################
+
+_init_django() {
+    type=django
+    cat >> $1 <<EOT
+PYTHONUSERBASE="$localenv"
+PIP_USER=true
+export PYTHONUSERBASE PIP_USER
+EOT
+    . $1
+    pip3 install gunicorn
+}
+
+################################################################################
+
+_init_plack() {
+    type=plack
+    cat >> $1 <<EOT
+PERL5LIB="$localenv/lib/perl5"
+PERL_LOCAL_LIB_ROOT="$localenv"
+PERL_MB_OPT="--install_base $localenv"
+PERL_MM_OPT="INSTALL_BASE=$localenv"
+PERL_CPANM_OPT="--local-lib=$localenv --notest"
+export PERL5LIB PERL_LOCAL_LIB_ROOT PERL_MB_OPT PERL_MM_OPT PERL_CPANM_OPT
+EOT
+    . $1
+    cpanm Starman
+}
+
+################################################################################
+
+_init_rails() {
+    type=rails
+    cat >> $1 <<EOT
+GEM_HOME="$localenv"
+GEM_PATH="$localenv"
+export GEM_HOME GEM_PATH
+EOT
+    . $1
+    gem install bundler
+    gem install unicorn
+}
+
+################################################################################
+
+_init_project() {
+    echo '#-Start-local-#'                     > $2
+    [ -f "$1/package.json" ]     && _init_node   $2
+    [ -f "$1/requirements.txt" ] && _init_django $2
+    [ -f "$1/app.psgi" ]         && _init_plack  $2
+    [ -f "$1/Gemfile.lock" ]     && _init_rails  $2
+    echo '#-End-local-#'                      >> $2
+}
+
+################################################################################
+
+_create_db() {
+    psql="/usr/local/bin/psql -U postgres"
+
+    username=$(openssl rand -base64 64 | tr -cd '[[:lower:]]' | head -c 12)
+    password=$(openssl rand -base64 64 | tr -cd '[[:alnum:]]' | head -c 12)
+    database=$(openssl rand -base64 64 | tr -cd '[[:lower:]]' | head -c 12)
+
+    $psql -c "CREATE USER $username WITH PASSWORD '$password';" 2>&1 >/dev/null
+    $psql -c "CREATE DATABASE $database WITH OWNER $username;"  2>&1 >/dev/null
+
+    echo '#-Start-DB-#' >> $2
+    printf "export DATABASE_URL=postgresql://%s:%s@%s:%s/%s\n" \
+        $username $password ${PGHOST-localhost} ${PGPORT-5432} $database \
+        >> $2
+    echo '#-End-DB-#' >> $2
+
+    printf "%s:%s:%s:%s:%s\n" \
+        ${PGHOST-localhost} ${PGPORT-5432} $database $username $password \
+        >> "pgpass"  # TODO
+}
+
+################################################################################
+
+_write_rc() {
+    name=$(printf '%s' "$3" | tr -dc '[[:alnum:]_.]' | tr '[[:upper:].]' '[[:lower:]_]')
+    [ -n "$name" ] || exit 1
+
+    cd "$(cd $(dirname -- $0)/..; pwd)"
+    for f in etc/rc.d/$type etc/nginx/conf.d/nginx; do
+        /usr/bin/sed \
+            -e "s|__NAME__|$name|g;" \
+            -e "s|__PDIR__|$1|g;" \
+            -e "s|__SOCKET__|/tmp/$name.webapp|g;" \
+            -e "s|__PID__|/tmp/$name.pid|g;" \
+            < "$f" > "$dest/${f%/*}/$name"
+    done
+}
+
+################################################################################
+
+
+[ -d "$1" ] || exit 1
+dest=/usr/local
+root=$dest/www
+localenv=$(cd $1/.local; pwd)
+
+_init_project $1 $2
+_create_db $1 $2
+_write_rc $1 $2 ${3:-$(basename -- $1)}

@@ -9,9 +9,9 @@ name=__NAME__
 rcvar=${name}_enable
 load_rc_config $name
 
-command=/usr/local/bin/bundle
+command=__PDIR__/.local/bin/bundle
 command_args="exec unicorn -l __SOCKET__ -E production -D"
-pidfile=/tmp/__NAME__.pid
+
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}
 : ${__NAME___chdir:=__PDIR__}

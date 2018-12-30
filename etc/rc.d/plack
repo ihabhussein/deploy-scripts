@@ -10,8 +10,8 @@ rcvar=${name}_enable
 load_rc_config $name
 
 command=__PDIR__/.local/bin/starman
-command_args="-l __SOCKET__ --pid /tmp/__NAME__.pid -D bin/app.pl"
-pidfile=/tmp/__NAME__.pid
+command_args="-l __SOCKET__ --pid __PID__ -D app.psgi"
+pidfile=__PID__
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}
 : ${__NAME___chdir:=__PDIR__}

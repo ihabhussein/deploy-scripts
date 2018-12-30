@@ -8,12 +8,11 @@ if [ $# -lt 1 -o $# -gt 2 ]; then
 fi
 
 # Local environment file
-[ -f "$1/env.sh" ] && . $1/env.sh
+envfile=$1/env.sh
+[ -f "$envfile" ] || $(dirname -- $0)/init-project $1 $envfile $2
+. $envfile
 
-# BSD rc.d configuration file
-[ -f "/usr/local/etc/rc.conf.d/$2" ] && . "/usr/local/etc/rc.conf.d/$2"
-
-if [ -f "$1/requirements.txt" -a -x "$1/manage.py" ]; then
+if [ -x "$1/manage.py" ]; then
     # Django
     pip install ${PYTHONUSERBASE+--user} -q -r $1/requirements.txt
     $1/manage.py migrate
@@ -38,4 +37,4 @@ if [ -f "$1/package.json" ]; then
     npm install
 fi
 
-[ -n "$2" ] && restart-service $2
+[ -n "$2" ] && $(dirname -- $0)/restart-services $2

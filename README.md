@@ -9,3 +9,25 @@ file (`/etc/ssh/sshd_config`) to `yes`:
 
 then edit the `pre-receive` git hook to check for the `GIT__USER` value and
 either exit with zero value to allow or non zero value disallow the push.
+
+## Git Hooks
+
+- `post-receive`
+- `post-update`
+- `pre-receive`
+- `update`
+
+## Commands
+
+- `git-server`
+- `deploy`
+- `restart-services`
+
+## Workflow
+
+```
+    deploy ──────┐
+                 ├─→ post-deploy ─┬─→ init-project
+    post-recive ─┘                │
+                                  └─→ restart-services
+```
