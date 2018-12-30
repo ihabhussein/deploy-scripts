@@ -20,4 +20,4 @@ else
     exit 1
 fi
 
-post-deploy $target $(git config --get deploy.service)
+$(dirname -- $0)/post-deploy $target $(git config --get deploy.service)

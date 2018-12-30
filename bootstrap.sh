@@ -6,7 +6,6 @@ install='install -bpSv'
 oldpwd="$(pwd)"
 cd "$(cd $(dirname -- $0); pwd)"
 
-find bin                     -type d | xargs -I XX  mkdir -p            $dest/XX
 find bin                     -type f | xargs -I XX  $install         XX $dest/XX
 
 find etc                     -type d | xargs -I XX  mkdir -p            $dest/XX

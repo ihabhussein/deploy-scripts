@@ -6,7 +6,6 @@
 
 : ${git=/usr/local/bin/git}
 : ${git_shell=/usr/local/bin/git-shell}
-: ${git_hooks=/usr/local/bin/git-hooks}
 
 set -e
 
@@ -70,7 +69,7 @@ init() {
 
     $git init --bare $home/$1
     GIT_DIR=$home/$1; export GIT_DIR
-    $git config core.hooksPath $git_hooks
+    $git config core.hooksPath $(dirname -- $0)
 
     if [ -n "$2" ]; then
         mkdir -p "$2"

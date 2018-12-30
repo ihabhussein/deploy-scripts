@@ -14,7 +14,7 @@ while read sha1_old sha1_new refname; do
     [ ${refname##*/} = $ref ] || continue
 
     GIT_WORK_TREE="$target" git checkout -f $ref
-    post-deploy $target $service
+    $(dirname -- $0)/post-deploy $target $service
 done
 
 if [ "$shallow" = "true" ]; then
