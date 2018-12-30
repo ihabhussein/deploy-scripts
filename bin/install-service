@@ -1,6 +1,9 @@
 #!/bin/sh
 
-name=$(printf '%s' "$1" | tr -dc '[[:alnum:]_]' | tr '[[:upper:]]' '[[:lower:]]')
+[ -d "$1" ] || exit 1
+
+name=$(basename $1)
+name=$(printf '%s' "$1" | tr -dc '[[:alnum:]_.]' | tr '[[:upper:].]' '[[:lower:]_]')
 dest=/usr/local
 root=$dest/www
 
