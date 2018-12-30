@@ -9,8 +9,8 @@ name=__NAME__
 rcvar=${name}_enable
 load_rc_config $name
 
-command=/usr/local/bin/perl
-command_args="__PDIR__/.local/bin/starman -l /tmp/starman.__NAME__ --pid /tmp/__NAME__.pid -D bin/app.pl"
+command=__PDIR__/.local/bin/starman
+command_args="-l /tmp/starman.__NAME__ --pid /tmp/__NAME__.pid -D bin/app.pl"
 pidfile=/tmp/__NAME__.pid
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}

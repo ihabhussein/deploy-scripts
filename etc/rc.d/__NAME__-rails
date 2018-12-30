@@ -1,21 +1,20 @@
 #!/bin/sh
-
+#
 # PROVIDE: __NAME__
 # REQUIRE: LOGIN postgresql nginx
 # KEYWORD:
 
 . /etc/rc.subr
 name=__NAME__
-rcvar=__NAME___enable
-pidfile=__SOCKET__.pid
-command=/usr/local/bin/gunicorn-3.6
-command_args="-b unix:__SOCKET__ -w 4 -p $pidfile -D website.wsgi"
-
+rcvar=${name}_enable
 load_rc_config $name
+
+command=/usr/local/bin/bundle
+command_args="exec unicorn -l /tmp/rack.__NAME__ -E production -D"
+pidfile=/tmp/__NAME__.pid
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}
-: ${__NAME___group:=www}
 : ${__NAME___chdir:=__PDIR__}
-: ${__NAME___env:=}
+: ${__NAME___env:=GEM_PATH=__PDIR__/.local}
 
 run_rc_command $1

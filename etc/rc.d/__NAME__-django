@@ -9,8 +9,8 @@ name=__NAME__
 rcvar=${name}_enable
 load_rc_config $name
 
-command=/usr/local/bin/python3.6
-command_args="/usr/local/bin/gunicorn-3.6 -b unix:/tmp/gunicorn.__NAME__ -w 4 -p /tmp/__NAME__.pid -D website.wsgi"
+command=__PDIR__/.local/bin/gunicorn
+command_args="-b unix:/tmp/gunicorn.__NAME__ -w 4 -p /tmp/__NAME__.pid -D website.wsgi"
 pidfile=/tmp/__NAME__.pid
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}
