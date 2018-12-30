@@ -27,12 +27,15 @@ fi
 
 if [ -f "$1/Gemfile.lock" ]; then
     # Ruby
-    (cd "$1" && bundle install)
+    cd "$1"
+    bundle install
+    ./bin/rake db:migrate)
 fi
 
 if [ -f "$1/package.json" ]; then
     # Node
-    (cd "$1" && npm install)
+    cd "$1"
+    npm install)
 fi
 
 [ -n "$2" ] && restart-service $2
