@@ -10,7 +10,7 @@ root=$dest/www
 [ -n "$name" ] || exit 1
 
 oldpwd="$(pwd)"
-cd "$(cd $(dirname -- $0); pwd)"
+cd "$(cd $(dirname -- $0)/..; pwd)"
 
 if [ -f "$1/requirements.txt" -a -x "$1/manage.py" ]; then
     type=django
