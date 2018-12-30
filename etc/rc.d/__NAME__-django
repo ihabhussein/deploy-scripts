@@ -10,7 +10,7 @@ rcvar=${name}_enable
 load_rc_config $name
 
 command=__PDIR__/.local/bin/gunicorn
-command_args="-b unix:/tmp/gunicorn.__NAME__ -w 4 -p /tmp/__NAME__.pid -D website.wsgi"
+command_args="-b unix:__SOCKET__ -w 4 -p /tmp/__NAME__.pid -D website.wsgi"
 pidfile=/tmp/__NAME__.pid
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}

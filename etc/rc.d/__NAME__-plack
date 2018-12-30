@@ -10,7 +10,7 @@ rcvar=${name}_enable
 load_rc_config $name
 
 command=__PDIR__/.local/bin/starman
-command_args="-l /tmp/starman.__NAME__ --pid /tmp/__NAME__.pid -D bin/app.pl"
+command_args="-l __SOCKET__ --pid /tmp/__NAME__.pid -D bin/app.pl"
 pidfile=/tmp/__NAME__.pid
 : ${__NAME___enable:=no}
 : ${__NAME___user:=www}
