@@ -26,8 +26,8 @@ either exit with zero value to allow or non zero value disallow the push.
 ## Workflow
 
 ```
-    deploy ──────┐
-                 ├─→ post-deploy ─┬─→ init-project
-    post-recive ─┘                │
-                                  └─→ restart-services
+    deploy ───────┐
+                  ├─→ post-deploy ─┬─→ init-project
+    post-receive ─┘                │
+                                   └─→ restart-services
 ```
