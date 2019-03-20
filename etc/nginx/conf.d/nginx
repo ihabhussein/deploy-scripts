@@ -11,8 +11,8 @@ server {
     server_tokens off;
     add_header Strict-Transport-Security "max-age=31536000";
 
-    error_log  syslog:facility=local6,tag=__NAME__,severity=warn;
-    access_log syslog:facility=local7,tag=__NAME__,severity=info;
+    error_log  /var/log/nginx/__NAME__-error.log warn;
+    access_log /var/log/nginx/__NAME__-access.log;
 
     ssl_certificate           /usr/local/etc/letsencrypt/live/__NAME__/fullchain.pem;
     ssl_certificate_key       /usr/local/etc/letsencrypt/live/__NAME__/privkey.pem;
