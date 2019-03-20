@@ -8,7 +8,7 @@ if [ $# -lt 1 -o $# -gt 2 ]; then
 fi
 
 # Local environment file
-envfile=$1/env.sh
+envfile=/usr/local/rc.conf.d/${2:-$(basename -- $1)}
 [ -f "$envfile" ] || $(dirname -- $0)/init-project $1 $envfile $2
 . $envfile
 
