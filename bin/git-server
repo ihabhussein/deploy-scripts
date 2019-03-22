@@ -4,8 +4,8 @@
 : ${group:=git}
 : ${home:=/home/git}
 
-: ${git=/usr/local/bin/git}
-: ${git_shell=/usr/local/bin/git-shell}
+: ${git:=$(command -v git)}
+: ${git_shell:=(command -v git-shell)}
 
 set -e
 
