@@ -1,8 +1,8 @@
 #!/bin/sh
 
-: ${user=git}
-: ${group=git}
-: ${home=/home/git}
+: ${user:=git}
+: ${group:=git}
+: ${home:=/home/git}
 
 : ${git=/usr/local/bin/git}
 : ${git_shell=/usr/local/bin/git-shell}
