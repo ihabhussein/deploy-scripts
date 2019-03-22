@@ -9,11 +9,25 @@
 
 set -e
 
+update_config_file() {
+    local file=$1; shift
+    local marker='#### GIT SERVER SETTINGS ####'
+
+    sed -i.bak -e "/$marker/,/.*/d" $file
+    for line; do
+        printf "$marker\n%s\n" "$line" >> $file
+    done
+}
+
 sysinit() {
     if [ $# -ne 0 ]; then
         echo "Usage: system_init" >&2
         return 1
     fi
+
+    # Prepare system config files
+    update_config_file /etc/shells          $git_shell
+    update_config_file /etc/ssh/sshd_config 'PermitUserEnvironment yes'
 
     getent group $group || \
         pw groupadd $group
