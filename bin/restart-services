@@ -19,13 +19,10 @@ done
 #
 # Restarting
 #
-output=$(mktemp)
 for f in $flag_dir/*; do
     [ -f "$f" ] || continue
-    ls -l "$f" >> $output
+    ls -l "$f"
     name=$(basename -- "$f")
-    service $name restart 2>&1 >> $output
+    service "$name" restart 2>&1
     rm "$f"
 done
-[ -s "$output" ] && mail -s 'Restarting services' root < $output
-rm "$output"
